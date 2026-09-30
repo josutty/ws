@@ -8,8 +8,8 @@ styling-engineer) also not planned here — see AGENTS.md §11 / architect mode 
 
 | TASK | Slice | Goal | Depends on | Status |
 |---|---|---|---|---|
-| TASK-001 | shared/ui | Button, Input, Select, Badge, Modal, Toast | — | in-progress |
-| TASK-002 | features/auth-login | LoginForm | TASK-001 | open |
+| TASK-001 | shared/ui | Button, Input, Select, Badge, Modal, Toast | — | done |
+| TASK-002 | features/auth-login | LoginForm | TASK-001 | in-progress |
 | TASK-003 | features/edit-indent-line | EditableQtyCell (reconstructed — see G1 note) | TASK-001 | open |
 | TASK-004 | features/filter-indent | FilterRail, MultiSelectFilter (no saved-views persistence — see G2 note) | TASK-001 | open |
 | TASK-005 | features/add-fert-line | AddFertModal | TASK-001 | open |
