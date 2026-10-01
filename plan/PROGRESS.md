@@ -10,7 +10,7 @@ styling-engineer) also not planned here — see AGENTS.md §11 / architect mode 
 |---|---|---|---|---|
 | TASK-001 | shared/ui | Button, Input, Select, Badge, Modal, Toast | — | done |
 | TASK-002 | features/auth-login | LoginForm | TASK-001 | done |
-| TASK-003 | features/edit-indent-line | EditableQtyCell (reconstructed — see G1 note) | TASK-001 | in-progress |
+| TASK-003 | features/edit-indent-line | EditableQtyCell (reconstructed — see G1 note) | TASK-001 | done |
 | TASK-004 | features/filter-indent | FilterRail, MultiSelectFilter (no saved-views persistence — see G2 note) | TASK-001 | open |
 | TASK-005 | features/add-fert-line | AddFertModal | TASK-001 | open |
 | TASK-006 | features/export-indent | ExportModal, buildIndentCsv | TASK-001 | open |
@@ -23,7 +23,7 @@ styling-engineer) also not planned here — see AGENTS.md §11 / architect mode 
 | TASK-013 | widgets/workbook-toolbar | WorkbookToolbar, ColumnsPopover | TASK-001, TASK-004, TASK-005, TASK-006 | open |
 | TASK-014 | widgets/indent-grid | IndentGrid, LineDetailDrawer | TASK-001, TASK-003 | open |
 | TASK-015 | pages/home | HomePage (HomeDashboard) | TASK-006, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012 | open |
-| TASK-016 | pages/workbook | WorkbookPage | TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-013, TASK-014 | open |
+| TASK-016 | pages/workbook | WorkbookPage | TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-013, TASK-014 | in-progress |
 
 Status values: `open → in-progress → done` (test-engineer sets in-progress, reviewer sets done).
 
