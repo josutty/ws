@@ -1,6 +1,6 @@
 # Project Conventions (single source of truth for ALL agents)
 
-Copilot loads this file as workspace instructions, and every agent file tells its agent to read it. When an agent file and this file
+OpenCode loads this file into every agent's context. When an agent file and this file
 disagree, THIS file wins — report the conflict in your HANDOFF reason.
 
 ## 0. Modes and precedence
@@ -133,10 +133,8 @@ scripts under these names (as aliases to the project's own tools) so permissions
 - Agents run one at a time. Nothing runs in parallel (one working tree, one committer).
 - Never: `git push`, `--force`, `reset --hard`, `rebase`, `checkout -- .`, `clean -fd`, `stash`. Humans push.
 - To undo your own change to a file: `git restore --source=<start-sha> -- <file>`.
-- Each agent's file and command limits are enforced by the agent-guard hook
-  (`.github/agent-guard/policy.json`). They're coarse on purpose (they must work on non-FSD projects),
-  so the TASK Files table stays the real boundary and the reviewer's scope + owner check enforces it.
-- `.githooks/pre-commit` blocks commits on the base branch (`git config core.hooksPath .githooks`).
+- Path permissions in agent files are a coarse guard (they must work on non-FSD projects too).
+  The TASK Files table is the real boundary, and reviewer's scope + owner check enforces it.
 
 ## 8. Sensitive data (organization policy — applies to code, mocks, fixtures, logs, docs)
 
@@ -185,7 +183,6 @@ BLOCKED-BUG BLOCKED-TEST NEEDS-RESEARCH DUPLICATE FIXED VERIFY-FAIL-DESIGN LOGGE
 | `notes/research/**` (except api-schema.md, codebase-map.md) | researcher |
 | `notes/memory/reflections/**` | reflector |
 | `plan/history/TASK-NNN.md` | append-only, any agent working on that task |
-| `.github/**`, `.githooks/**`, `.vscode/**` | humans only — agents never edit the team's own setup |
 
 ## 12. UI conventions (senior-level defaults — PROJECT.md may override for existing projects)
 

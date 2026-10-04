@@ -66,3 +66,34 @@ six `.stories.tsx`.
 - `npm run build-storybook` — builds clean (only the expected "chunks larger than 500 kB" Vite
   warning, which AGENTS.md §12 flags as a reviewer P2 finding, not an error).
 
+## reviewer — re-verification (revision 2 Files table)
+
+Re-ran against `plan/tasks/TASK-001.md` revision 2 (Files table now includes `test/setup.ts` and
+`test/test-utils.tsx` as test-engineer-owned rows).
+
+- Scope: `git diff --name-only 4eb5342..HEAD` = 21 files, all ⊆ revision-2 Files table
+  (+ `plan/history/TASK-001.md`, `plan/PROGRESS.md`). No scope violation this time. Authorship
+  confirmed per-commit: `e8a499e TASK-001(test-engineer)` owns the 6 `*.test.tsx` +
+  `test/setup.ts` + `test/test-utils.tsx`; `35163c4 TASK-001(component-generator)` owns the 6
+  components + `index.ts` + 6 `.stories.tsx`. Branch is `feat/shop-v1`, not base.
+- Gates: `npm run typecheck` clean (0 errors). `npm run lint` — 1 error / 8 warnings, all on
+  pre-existing out-of-scope files (`fsd/insignificant-slice` on entities/features slices,
+  `fsd/segments-by-purpose` on `src/app/providers`) — none on TASK-001 files. `npx vitest run
+  src/shared/ui` — 6 files / 22 tests, all green. `npm run build-storybook` — builds clean, only
+  the expected >500kB chunk warning (P2, not a gate failure).
+- Backup static checks (scoped to `src/shared/ui/**` and `test/**`): no `style=`, no hex/rgba
+  literals, no raw Tailwind palette classes, no fetch/axios/baseApi, no `console.*`, no
+  `.skip/.only/.todo` in any TASK-001 file. `test/test-utils.tsx` imports `makeStore` from `@app`
+  — allowed: `test/` is explicitly outside the FSD layer restriction (AGENTS.md's structure list),
+  and a `renderWithProviders` helper needs the store.
+- Manual spec re-confirmed unchanged: Modal focus trap + Escape + focus-restore, `role="dialog"
+  aria-modal aria-labelledby`; Input `aria-invalid`/`aria-describedby` wired to a visible error
+  `<span>`; Toast `role="status" aria-live="polite"`, hidden when `message === null`; all props
+  match TASK-001 exactly; `index.ts` public API re-exports all six + their prop types.
+- `plan/tasks/TASK-001.md` revision 2 remains **uncommitted** in the working tree. Reviewer's
+  agent-guard policy denies edits outside `plan/history/**` / `plan/PROGRESS.md` and denies
+  `git commit`, so this was verified against on-disk content only, not committed — architect (or
+  a human) still needs to commit it.
+
+Verdict: **PASS**. `plan/PROGRESS.md` TASK-001 status set to `done`.
+

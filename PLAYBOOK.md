@@ -1,18 +1,13 @@
 # Playbook — how to run the agent team
 
-## One-time setup (GitHub Copilot in VS Code)
-0. Install **Node 22.22+ (or 24.15+)**. The first run also downloads Playwright's Chromium once.
-1. Copy the contents of this folder into the ROOT of the project repo, keeping the dot-folders:
-   `AGENTS.md`, `.github/agents/` (19 agents), `.github/agent-guard/`, `.github/copilot-instructions.md`,
-   `.githooks/`, `.vscode/settings.json`. Merge `.vscode/settings.json` if the repo already has one.
-2. Run once per clone: `git config core.hooksPath .githooks` (blocks commits on the base branch).
-3. VS Code: trust the workspace (hooks only run in trusted workspaces) and use the **Local** session
-   target — agent-scoped hooks, which run the agent-guard, only run there.
-4. Optional MCP tools: copy `.vscode/mcp.json.example` to `.vscode/mcp.json` and fill in the commands.
-   Agents work without them (they fall back to search and the terminal).
-5. Open Chat → Agent dropdown → **orchestrator**. It's the only agent listed; the other 18 are its
-   subagents (`user-invocable: false`). You only ever talk to the orchestrator.
-6. Right-click in the Chat view → **Diagnostics** to confirm all 19 agents loaded without errors.
+## One-time setup (per machine)
+0. Install **Node 22.22+ (or 24.15+)**. The first run also downloads Playwright's Chromium
+   (`npx playwright install chromium`), so it needs network access once.
+1. Copy all agent files into your OpenCode agents folder (project `.opencode/agents/`, or global `~/.config/opencode/agents/`; very old OpenCode versions use `agent/` without the s). They already carry the names
+   the orchestrator dispatches by (`coder.md` → agent `coder`) — don't rename them. The team is 19
+   agents; the orchestrator stops with "<agent> not available" if one is missing.
+2. Copy `AGENTS.md` into the ROOT of every project repo you run the team on.
+3. Select the **orchestrator** as the primary agent. You only ever talk to the orchestrator.
 
 ## Put inputs in the same place every time
 ```
@@ -92,7 +87,7 @@ A typo in a comment still doesn't need the team — a single chat with AGENTS.md
 Every feature/bugfix/gap-fill run starts on a new branch (`feat/<name>` or `fix/<slug>`) created from
 PROJECT.md's `base-branch`. Commit or stash your own work first — the team stops on a dirty tree.
 
-## Model tiering (add a `model:` line to each agent file — each file has a tier comment)
+## Model tiering (edit the `model:` line in each agent file)
 All agents ship on one model. Recommended split — use whatever strong/fast models your provider has:
 | Tier | Agents |
 |---|---|
@@ -112,3 +107,29 @@ All agents ship on one model. Recommended split — use whatever strong/fast mod
 | 1 | coverage-matrix.md, analysis/components.md, backend-gaps.md, fsd-structure.md compliance table | Is every screen element there? Does placement follow the client's FSD doc? |
 | 2 | PROGRESS.md, 2–3 TASK files | Is each TASK small? Are the props and states what the UX shows? |
 | 3 | reviewer result (gates A–G incl. e2e + axe), coverage-matrix.md | Run `npm run dev`, click through every screen in light + dark, then once with the keyboard only. |
+
+
+## If something goes wrong — plain-language guide (no coding needed)
+The orchestrator explains problems in everyday words and gives numbered choices — just reply with the
+number. You can also type these to the orchestrator at any time:
+
+| You type | What happens |
+|---|---|
+| `status` | tells you where the project is, what is done, what is next |
+| `help` | runs the checks and explains any problem in plain words |
+| `explain` | says what the last step did and why |
+| `resume` | continues after a break, a sign-in expiry or a closed window — nothing is lost |
+| `undo last step` | shows what the last step changed and reverts only that, after you confirm |
+
+| What you see | What it means | What to type |
+|---|---|---|
+| Chat stopped / sign-in or usage-limit message | the session ended, your work is saved | sign in again → new chat → orchestrator → `resume` |
+| Blank page, or a message about setup / "Bootstrapping" | pages aren't connected yet | `connect the finished pages` |
+| The orchestrator says "Problem: …" with options | an agent got stuck | reply with the number (the first option is recommended) |
+| The result looks wrong at a gate | something was misunderstood | `reject: <what is wrong, which screen>` |
+| Not sure where you are | — | `status` |
+| You changed a screen or requirement | inputs changed | `Mode: gap-fill. Change: <what changed>. Updated inputs: <files>` |
+| Want only some tasks | — | `Run only TASK-003 and TASK-016` (it checks they don't depend on others) |
+
+## Shortcut commands (OpenCode)
+Instead of pasting long prompts: `/new-project <name>`, `/feature <what>`, `/bugfix <what>`, `/quick <what>`, `/gap-fill <what changed>`, `/status`, `/resume`, `/approve`, `/reject <what is wrong>`. They start the orchestrator with the same prompts shown above. `node tools/check-install.mjs` checks that everything is installed.

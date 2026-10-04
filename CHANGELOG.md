@@ -177,15 +177,19 @@ download a browser) — config and specs typecheck and lint.
 
 ---
 
-# Copilot edition (converted from revision 4)
+# Revision 5 — works for non-technical users
 
-| OpenCode | GitHub Copilot (VS Code) |
+| File | Change |
 |---|---|
-| agent folder, `<name>.md` | `.github/agents/<name>.agent.md` with `name:` |
-| `mode: primary` / `subagent` | orchestrator visible; the other 18 `user-invocable: false`; orchestrator lists them in `agents:` and has `disable-model-invocation: true` |
-| task tool | the `agent` tool (subagents) |
-| `permission.edit` / `permission.bash` | `tools:` per role (read, search, edit, execute, agent, todo) + the **agent-guard** PreToolUse hook, which enforces the same rules from `.github/agent-guard/policy.json` (last match wins, every segment of a chained command checked) |
-| `serena_*`, `qartez_*` | `serena/*`, `qartez/*` MCP tools (`.vscode/mcp.json.example`) |
-| `model: opencode-go/…` | omitted — each file has a tier comment; set `model: '<Name> (copilot)'` |
-| human gates | unchanged, plus handoff buttons on the orchestrator (Gate approved / Where are we? / Resume) |
-| — | added to every agent's policy: deny `git push`, `--no-verify`, `git config`, `git add -A/./--all`, `git commit -a`; `.githooks/pre-commit` blocks commits on the base branch |
+| orchestrator | New "Talking to the human" rules: a plain-language status card after every step, a Problem / Why / numbered-options format for failures, gate checklists with ready replies, typed commands (`status`, `help`, `explain`, `resume`, `undo last step`), recognition of common situations, no raw HANDOFF lines or error codes shown, never asks the human to run git/terminal commands |
+| orchestrator | Resume now detects an interrupted step (no final HANDOFF, cut-off files) and re-runs only that agent to repair it |
+| orchestrator | A page TASK is not finished until its page is wired — even when told "stop after the review" (this was the cause of the blank "Bootstrapping" screen) |
+| app-bootstrap | The placeholder screen tells the user what to say instead of "Bootstrapping…" |
+| PLAYBOOK | Plain-language "if something goes wrong" table |
+
+---
+
+# OpenCode kit additions
+- `.opencode/commands/`: 9 shortcut commands (verified discovered by OpenCode 1.18.34, all routed to the orchestrator)
+- `tools/check-install.mjs`: plain-language install check (verified on a good, a broken and an empty copy)
+- `tools/set-models.mjs` + `models.json`, `opencode.json`, `.vscode/tasks.json`, `inputs/` scaffold

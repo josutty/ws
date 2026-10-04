@@ -72,3 +72,44 @@ sign-in page TASK exists in the 16-TASK plan). 0 ESLint errors/warnings on any f
 `src/features/auth-login/index.ts`, `src/features/auth-login/ui/LoginForm.tsx`,
 `src/features/auth-login/lib/loginSchema.ts`, `plan/history/TASK-002.md` — within/consistent with
 TASK-002's Files table (plus the TASK-permitted `lib/` addition).
+
+## reviewer — verification
+
+- Scope: `git diff --name-only 515fb09..HEAD` = `plan/PROGRESS.md`, `plan/history/TASK-002.md`,
+  `src/features/auth-login/{index.ts,lib/loginSchema.ts,ui/LoginForm.test.tsx,ui/LoginForm.tsx}` —
+  all ⊆ TASK-002's Files table (+ the TASK-permitted `lib/loginSchema.ts` row + history/progress).
+  Branch `feat/shop-v1`, not base. Authorship confirmed: `6a6d8bf TASK-002(test-engineer)` owns the
+  test + PROGRESS status bump, `ec7add2 TASK-002(coder)` owns `LoginForm.tsx`, `index.ts`,
+  `loginSchema.ts`.
+- Gates: `npm run typecheck` — 0 errors. `npm run lint` — exit 1, but the 1 error
+  (`src/app/providers`, app-bootstrap-owned) and 8 `insignificant-slice` warnings (incl.
+  `features/auth-login`, no consumer page yet) are unchanged pre-existing findings, none on any
+  TASK-002 file — matches the baseline confirmed in TASK-001's reviewer pass. `npx vitest run
+  src/features/auth-login` — 1 file, 7/7 passed, covering all six UI-states rows.
+- Backup static checks (scoped to `src/features/auth-login/{index.ts,lib,ui}`): no `style=`, no
+  hex/rgba literals, no raw Tailwind palette classes, no `fetch`/`axios`/`baseApi`, no `console.*`,
+  no `@app` import, no `.skip/.only/.todo`, no SSN/card-like literals. (`baseApi` only appears in
+  `api/authApi.ts`, store-architect-owned and untouched by this TASK — expected.)
+- Error-mapping contract verified against `shared/api/errors.ts` + `mocks/handlers/identity.ts`:
+  `ERR_UNKNOWN_IDENTIFIER` → `setError('identifier', …)`, `ERR_WRONG_PASSWORD` →
+  `setError('password', …)` (message includes attempts-remaining from the body), any other code →
+  `setError('root', …)` rendered as `role="alert"`; `getCurrentCyclePreview` failure renders
+  nothing (no `isError` branch) — no retry UI, form stays usable. All backed by passing tests.
+- react-hook-form + zod: `useForm` with `zodResolver(loginSchema)`, `Controller` wraps the shared
+  `Input`; no `useState` copy of server errors (`formState.errors` only; `stubMessage` is UI-only
+  toast state, not server data).
+- AGENTS.md §12 Forms: both fields have a visible `<label htmlFor>` (via `Input`); `aria-invalid` +
+  `aria-describedby` wired to the error `<span>` (confirmed in `shared/ui/Input.tsx`); `autoComplete`
+  set (`username` / `current-password`); `<form noValidate>`; submit button `disabled={isLoading}`
+  while the mutation is in flight (test-verified).
+- P2 (CONCERNS, not blocking): the submit button is disabled while submitting but shows no visual
+  loading indicator (spinner/text swap) — the shared `Button` (TASK-001/component-generator-owned,
+  out of this TASK's file scope) has no `loading` prop at all, so "disabled-only" is the most this
+  TASK's files can express. Not a coder-introduced regression; worth a `Button` enhancement in a
+  future TASK if AGENTS.md §12's "shows loading" wording is meant literally.
+- No other P0/P1 found: props match, all six UI-states rows rendered and tested, no business logic
+  in the component beyond the allowed mapping, no teardown needed (RTK Query hooks auto-unsubscribe,
+  confirmed no manual listeners/timers/AbortControllers).
+
+Verdict: **CONCERNS** (one P2, shared-`Button` loading-indicator gap, out of this TASK's scope).
+`plan/PROGRESS.md` TASK-002 status set to `done`.
